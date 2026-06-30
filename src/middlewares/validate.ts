@@ -27,26 +27,29 @@ const applyParsedRequestData = (
 };
 
 export const validateRequest = (schema: ZodTypeAny) => {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const bodyResult = schema.safeParse(req.body);
-    const requestResult = bodyResult.success
-      ? bodyResult
-      : schema.safeParse({
-          body: req.body,
-          params: req.params,
-          query: req.query,
-        });
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const requestData = {
+      body: req.body,
+      params: req.params,
+      query: req.query,
+    };
 
-    if (!requestResult.success) {
+    let result = schema.safeParse(requestData);
+
+    if (!result.success) {
+      result = schema.safeParse(req.body);
+    }
+
+    if (!result.success) {
       res.status(400).json({
         success: false,
         message: 'Validation failed',
-        errors: formatIssues(requestResult.error.issues),
+        errors: formatIssues(result.error.issues as Array<{ path: (string | number)[]; message: string }>),
       });
       return;
     }
 
-    applyParsedRequestData(req, requestResult.data as Record<string, unknown>);
+    applyParsedRequestData(req, result.data as Record<string, unknown>);
 
     next();
   };

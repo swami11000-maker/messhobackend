@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import type { NextFunction, Request, Response } from 'express';
-import { AdminRewardAuditLog, AuditLog, Membership, RewardSchedule, SupportTicket, Withdrawal } from '../models/platform.models.js';
+import { AdminRewardAuditLog, AuditLog, Membership, RewardSchedule, SupportTicket, Transaction, Withdrawal } from '../models/platform.models.js';
 import { User } from '../models/user.models.js';
 import { HttpError } from './auth/user.js';
 import { MEMBERSHIP_DAYS, getPlan } from '../config/plans.js';
@@ -221,7 +221,7 @@ export const adminAudit = async (_req: Request, res: Response, next: NextFunctio
 
 export const adminRewardSchedulesByUser = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const identifier = req.params.userId.trim();
+      const identifier = Array.isArray(req.params.userId) ? req.params.userId[0] : req.params.userId;
 		const user = mongoose.Types.ObjectId.isValid(identifier)
 			? await User.findById(identifier).select('name email status type payoutWalletAddress createdAt updatedAt')
 			: await User.findOne({

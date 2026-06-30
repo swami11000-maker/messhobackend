@@ -9,7 +9,7 @@ app.listen(5000, () => {
 	console.log(`Server running at`);
 });
 
-app.get('/api/health', (_req, res) => {
+app.get('/', (_req, res) => {
 	res.json({ success: true, message: 'SpinGold API is healthy' });
 });
 

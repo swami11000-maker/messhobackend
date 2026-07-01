@@ -1,14 +1,12 @@
 {
 	"name": "backend",
 	"version": "1.0.0",
-	"main": "dist/index.js",
+	"main": "src/index.js",
 	"type": "module",
 	"scripts": {
 		"dev": "tsx watch src/index.ts",
 		"start": "tsx src/index.ts",
-		"build": "tsc",
-		"typecheck": "tsc --noEmit",
-		"seed:admin": "tsx src/scripts/seed-admin.ts"
+		"build": "tsc"
 	},
 	"keywords": [],
 	"author": "",

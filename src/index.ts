@@ -5,12 +5,15 @@ import { app } from './server.js';
 // const start = async () => {
 // await connectDB();
 
-app.listen(5000, () => {
-	console.log(`Server running at`);
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "SpinGold API is healthy",
+  });
 });
 
-app.get('/', (_req, res) => {
-	res.json({ success: true, message: 'SpinGold API is healthy' });
+app.listen(5000, () => {
+  console.log("Server is running on http://localhost:5000");
 });
 
 // };

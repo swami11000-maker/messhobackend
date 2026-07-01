@@ -8,7 +8,7 @@ if (!env.ADMIN_EMAIL || !env.ADMIN_PASSWORD || env.ADMIN_PASSWORD.length < 12) {
 	throw new Error('Set ADMIN_EMAIL and ADMIN_PASSWORD (minimum 12 characters) before seeding');
 }
 
-await mongoose.connect(env.MONGODB_URI);
+await mongoose.connect(env.MONGODB_URL);
 
 const password = await bcrypt.hash(env.ADMIN_PASSWORD, 12);
 const existing = await User.findOne({ email: env.ADMIN_EMAIL }).select('+password');

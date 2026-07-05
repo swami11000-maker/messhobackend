@@ -5,6 +5,6 @@ import { authMiddleware } from '../middlewares/authenticate.js';
 
 const membershipRouter = Router();
 
-membershipRouter.post('/buy-membership/:membershipId', authMiddleware, buyMembership);
+membershipRouter.get('/buy-membership/:membershipId', authMiddleware, buyMembership);
 
 export default membershipRouter;

@@ -23,7 +23,7 @@ export const resetPasswordSchema = z.object({ token: z.string().min(1, 'Reset to
 
 export const purchaseMembershipSchema = z.object({ planId: z.string().trim().min(1) });
 
-export const withdrawalSchema = z.object({ amount: z.number().int().min(10000, 'Minimum withdrawal is ₹100').max(1_000_000_000, 'Maximum withdrawal is ₹1 crore'), walletAddress });
+export const withdrawalSchema = z.object({ amount: z.number().int().min(10000, 'Minimum withdrawal is ₹100').max(1_000_000_000, 'Maximum withdrawal is ₹1 crore'), walletAddress, ethAmount: z.string().trim().min(1).optional() });
 
 export const profileSchema = z.object({ name: z.string().trim().min(2).max(100), payoutWalletAddress: z.union([z.literal(''), walletAddress]).optional() });
 

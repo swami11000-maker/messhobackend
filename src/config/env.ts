@@ -26,4 +26,9 @@ export const env = {
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASSWORD: process.env.SMTP_PASSWORD,
   MAIL_FROM: process.env.MAIL_FROM ?? 'SpinGold <no-reply@spingold.local>',
+  TREASURY_WALLET_ADDRESS: process.env.TREASURY_WALLET_ADDRESS,
+  CHAIN_ID: Number(process.env.CHAIN_ID ?? 11155111),
+  RPC_URL: process.env.RPC_URL ?? 'https://rpc.sepolia.org',
+  PRIVATE_KEY: process.env.PRIVATE_KEY,
+  ETH_INR_RATE: Number(process.env.ETH_INR_RATE ?? 84160),
 };

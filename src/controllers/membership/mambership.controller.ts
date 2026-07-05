@@ -11,6 +11,7 @@ import { todayRewards } from '../../models/todayRewards.model.js';
 
 export const buyMembership = async (req: Request, res: Response) => {
 	try {
+		console.log('Request received for buying membership:', req);
 		if (!req.user) {
 			return res.status(401).json({ message: 'Authentication required' });
 		}
@@ -96,7 +97,11 @@ export const buyMembership = async (req: Request, res: Response) => {
 			}
 		} else {
 			findTransaction.traData.push(transactionData);
-			const updatedTodayReward = await todayRewards.findOneAndUpdate({ userId: id }, { $push: { todayRewords: { $each: rewards.dailyRewards[0].rewards } } }, { upsert: true, new: true });
+			const updatedTodayReward = await todayRewards.findOneAndUpdate(
+				{ userId: id },
+				{ $push: { todayRewords: { $each: rewards.dailyRewards[0].rewards } } },
+				{ upsert: true, new: true },
+			);
 			await findTransaction.save();
 		}
 

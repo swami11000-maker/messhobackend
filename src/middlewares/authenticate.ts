@@ -20,13 +20,14 @@ export const authMiddleware = async (req: Request, _res: Response, next: NextFun
 		if (!authHeader && !cookieToken) {
 			throw new ApiError(401, 'Authentication required');
 		}
-
 		const token = authHeader ? authHeader.trim().split(/\s+/)[1] : cookieToken;
+		console.log('Auth Header =======================>>>>:', token);
 		const scheme = authHeader ? authHeader.trim().split(/\s+/)[0] : 'bearer';
 
 		if (scheme?.toLowerCase() !== 'bearer' || !token) throw new ApiError(401, 'Authentication required');
 
 		const decoded = jwt.verify(token, env.JWT_SECRET, { algorithms: ['HS256'] });
+		console.log('Decoded token =================>>>>>>>>>>>>>>>>>>>>:', decoded);
 		if (typeof decoded === 'string' || typeof decoded.sub !== 'string' || typeof decoded.email !== 'string' || (decoded.type !== 'admin' && decoded.type !== 'user')) {
 			throw new ApiError(401, 'Authentication required');
 		}

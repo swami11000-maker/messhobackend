@@ -4,35 +4,32 @@ import { MembershipPlan } from '../../models/plan.models.js';
 import { MyMemberships } from '../../models/mymembership.modal.js';
 import { generatePlanRewards, getPlan, MEMBERSHIP_DAYS } from '../../config/plans.js';
 import { Transactions } from '../../models/transactions.modal.js';
-import { dailyNetwork } from 'viem/chains';
-import { estimateTotalFee } from 'viem/op-stack';
-import { dashboardController } from '../dashboard/dashboard.controller.js';
 import { todayRewards } from '../../models/todayRewards.model.js';
 
 export const buyMembership = async (req: Request, res: Response) => {
 	try {
 		console.log('Request received for buying membership:', req);
 		if (!req.user) {
-			return res.status(401).json({ message: 'Authentication required' });
+			return res.status(401).json({ success:false, message: 'Authentication required' });
 		}
 		const id = req.user.id;
 		const membershipId = String(req.params.membershipId);
 
 		if (!membershipId) {
-			return res.status(400).json({ message: 'Membership ID is required' });
+			return res.status(400).json({ success:false, message: 'Membership ID is required' });
 		}
 		const user = await User.findById(id);
 		if (!user) {
-			return res.status(404).json({ message: 'User not found' });
+			return res.status(404).json({ success:false, message: 'User not found' });
 		}
 
 		const fm = await MembershipPlan.findOne({ mid: membershipId });
 		if (!fm) {
-			return res.status(404).json({ message: 'MembershipPlan not found' });
+			return res.status(404).json({ success:false, message: 'MembershipPlan not found' });
 		}
 
 		if (user.walletBalance < fm.price) {
-			return res.status(400).json({ message: 'Insufficient balance' });
+			return res.status(400).json({ success:false, message: 'Insufficient balance' });
 		}
 
 		user.walletBalance -= fm.price;
@@ -93,7 +90,7 @@ export const buyMembership = async (req: Request, res: Response) => {
 			const saveTodayReward = await todayRewards.create({ userId: id, todayRewords: rewards.dailyRewards[0].rewards as any });
 
 			if (!saveTodayReward) {
-				return res.status(500).json({ message: 'Failed to save today reward' });
+				return res.status(500).json({ success:false, message: 'Failed to save today reward' });
 			}
 		} else {
 			findTransaction.traData.push(transactionData);
@@ -105,9 +102,9 @@ export const buyMembership = async (req: Request, res: Response) => {
 			await findTransaction.save();
 		}
 
-		return res.status(201).json({ message: 'MembershipPlan purchased successfully' });
+		return res.status(201).json({ success:true, message: 'MembershipPlan purchased successfully' });
 	} catch (error) {
 		console.error('Error purchasing membership:', error);
-		return res.status(500).json({ message: 'Internal server error', error });
+		return res.status(500).json({ success:false, message: 'Internal server error', error });
 	}
 };

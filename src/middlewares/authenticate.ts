@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
 import { User } from '../models/user.models.js';
 import { ApiError } from '../utils/api-error.js';
+import { getBearerToken } from '../utils/helperFunctions.js';
 
 interface JwtPayload {
 	sub: string;
@@ -20,53 +21,25 @@ declare global {
 	}
 }
 
-const extractTokenFromCookie = (cookieHeader?: string): string | null => {
-	if (!cookieHeader) return null;
-
-	const tokenCookie = cookieHeader
-		.split(';')
-		.map((part) => part.trim())
-		.find((part) => part.startsWith('token='));
-
-	return tokenCookie ? tokenCookie.split('=')[1] : null;
-};
-
 export const authMiddleware = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
 	try {
 		// Extract token from Authorization header or Cookie
-		const authHeader = req.headers.authorization;
-		const cookieHeader = req.headers.cookie;
-
-		let token: string | null = null;
-		let scheme: string | null = null;
-
-		if (authHeader) {
-			const parts = authHeader.trim().split(/\s+/);
-			scheme = parts[0];
-			token = parts[1] || null;
+		const token = getBearerToken(req.headers.authorization);
+console.log('tokennnn=>>>	',token)
+        const BearerToken = token?.startsWith('Bearer');
+		console.log('ttttt ====>>>>>>>>>>>',BearerToken)
+		if(!token){
+			throw new ApiError(401, 'Auth error');
 		}
-
-		// Fallback to cookie if no Authorization header
-		if (!token) {
-			token = extractTokenFromCookie(cookieHeader);
-			scheme = 'bearer'; // Default for cookie-based auth
-		}
-
-		// Validate token presence and scheme
-		if (!token || scheme?.toLowerCase() !== 'bearer') {
-			throw new ApiError(401, 'Authentication token required');
-		}
-
-		// Verify JWT
 		let decoded: JwtPayload;
 		try {
 			decoded = jwt.verify(token, env.JWT_SECRET, { algorithms: ['HS256'] }) as JwtPayload;
 		} catch (error) {
 			if (error instanceof jwt.TokenExpiredError) {
-				throw new ApiError(401, 'Authentication token expired');
+				throw new ApiError(401, `uthentication token expired : => ${error}`);
 			}
 			if (error instanceof jwt.JsonWebTokenError) {
-				throw new ApiError(401, 'Invalid authentication token');
+				throw new ApiError(401,`Invalid authentication token :: => ${error}  ===>>>> ${req.headers.authorization}`);
 			}
 			throw error;
 		}

@@ -16,26 +16,26 @@ app.use(express.json({ limit: '10kb' }));
 app.get('/api/health', (_req, res) => {
 	res.json({ success: true, message: 'SpinGold API is healthy' });
 });
-// async function seedPlans() {
-//   try {
-//    connectDB();
+async function seedPlans() {
+  try {
+   connectDB();
 
-//     // Delete existing documents
-//     await MembershipPlan.deleteMany({});
+    // Delete existing documents
+    await MembershipPlan.deleteMany({});
 
-//     await MembershipPlan.insertMany(MEMBERSHIP_PLANS);
+    await MembershipPlan.insertMany(MEMBERSHIP_PLANS);
 
-//     console.log('✅ Membership plans seeded successfully');
+    console.log('✅ Membership plans seeded successfully');
 
     
-//     process.exit(0);
-//   } catch (error) {
-//     console.error('❌ Failed to seed membership plans:', error);
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Failed to seed membership plans:', error);
 
-//     process.exit(1);
-//   }
-// }
-// seedPlans();
+    process.exit(1);
+  }
+}
+seedPlans();
 app.use('/api', routes);
 
 app.use((_req, res) => {

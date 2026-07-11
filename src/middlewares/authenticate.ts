@@ -25,9 +25,9 @@ export const authMiddleware = async (req: Request, _res: Response, next: NextFun
 	try {
 		// Extract token from Authorization header or Cookie
 		const token = getBearerToken(req.headers.authorization);
-console.log('tokennnn=>>>	',token)
+// console.log('tokennnn=>>>	',token)
         const BearerToken = token?.startsWith('Bearer');
-		console.log('ttttt ====>>>>>>>>>>>',BearerToken)
+		// console.log('ttttt ====>>>>>>>>>>>',BearerToken)
 		if(!token){
 			throw new ApiError(401, 'Auth error');
 		}
@@ -36,10 +36,10 @@ console.log('tokennnn=>>>	',token)
 			decoded = jwt.verify(token, env.JWT_SECRET, { algorithms: ['HS256'] }) as JwtPayload;
 		} catch (error) {
 			if (error instanceof jwt.TokenExpiredError) {
-				throw new ApiError(401, `uthentication token expired : => ${error}`);
+				throw new ApiError(401, 'Authentication token expired');
 			}
 			if (error instanceof jwt.JsonWebTokenError) {
-				throw new ApiError(401,`Invalid authentication token :: => ${error}  ===>>>> ${req.headers.authorization}`);
+				throw new ApiError(401,`Invalid authentication token`);
 			}
 			throw error;
 		}

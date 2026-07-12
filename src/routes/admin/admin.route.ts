@@ -2,21 +2,22 @@ import { Router } from 'express';
 
 import { authMiddleware, adminMiddleware } from '../../middlewares/authenticate.js';
 import {
-  adminOverviewController,
-  adminUsersController,
-  adminUserStatusController,
-  adminWithdrawalsController,
-  adminWithdrawalReviewController,
-  adminTreasuryController,
-  adminAuditController,
-  adminSupportController,
-  adminSupportReviewController,
-  rewardSchedulesUserController,
-  rewardScheduleUpdateController,
-  rewardScheduleLockController,
-  rewardScheduleBulkController,
-  rewardScheduleRegenerateController,
-  rewardAuditController,
+	adminOverviewController,
+	adminUsersController,
+	adminUserStatusController,
+	adminWithdrawalsController,
+	adminWithdrawalReviewController,
+	adminTreasuryController,
+	adminAuditController,
+	adminSupportController,
+	adminSupportReviewController,
+	rewardSchedulesUserController,
+	rewardScheduleUpdateController,
+	rewardScheduleLockController,
+	rewardScheduleBulkController,
+	rewardScheduleRegenerateController,
+	rewardAuditController,
+	adminGetUserDetail,
 } from '../../controllers/admin/admin.controller.js';
 
 const adminRoute = Router();
@@ -25,6 +26,7 @@ adminRoute.use(authMiddleware, adminMiddleware);
 
 adminRoute.get('/overview', adminOverviewController);
 adminRoute.get('/users', adminUsersController);
+adminRoute.get('/user/:userId',adminGetUserDetail)
 adminRoute.patch('/users/:userId/status', adminUserStatusController);
 adminRoute.get('/withdrawals', adminWithdrawalsController);
 adminRoute.patch('/withdrawals/:withdrawalId', adminWithdrawalReviewController);

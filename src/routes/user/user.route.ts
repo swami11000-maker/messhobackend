@@ -8,7 +8,7 @@ import { authMiddleware } from '../../middlewares/islogin.js';
 const router = Router();
 
 router.post('/register', register);
-router.post('/login', authMiddleware, login);
+router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.get('/get-user-detail', authMiddleware, getUserDetail);

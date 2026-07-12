@@ -1,4 +1,6 @@
 import { MyMemberships } from '../models/mymembership.modal.js';
+import { User } from '../models/user.models.js';
+import { Transactions } from '../models/transactions.modal.js';
 
 export const checkExpiredMemberships = async () => {
   try {
@@ -32,6 +34,42 @@ export const checkExpiredMemberships = async () => {
           );
 
           updated = true;
+
+          // Move ONLY this expired membership's 21-day spin earnings
+          // from rewardBalance to walletBalance (not the user's total rewardBalance)
+          const earned = plan.rewardEarned || 0;
+          if (earned > 0) {
+            const userDoc = await User.findById(membership.userId);
+            if (userDoc) {
+              const transfer = Math.min(earned, userDoc.rewardBalance);
+
+              const prevWallet = userDoc.walletBalance;
+              userDoc.walletBalance += transfer;
+              userDoc.rewardBalance -= transfer;
+              await userDoc.save();
+
+              const transactionData = {
+                planId: plan.planId,
+                prvBalance: prevWallet,
+                newBalance: userDoc.walletBalance,
+                amount: transfer,
+                transactionType: 'membership_reward_credit',
+                transactionStatus: 'credited',
+              };
+
+              const findTransaction = await Transactions.findOne({ userId: membership.userId });
+              if (!findTransaction) {
+                await Transactions.create({ userId: membership.userId, traData: [transactionData] });
+              } else {
+                findTransaction.traData.push(transactionData);
+                await findTransaction.save();
+              }
+
+              console.log(
+                `Credited => User:${membership.userId} | Plan:${plan.planId} | Amount:${transfer}`
+              );
+            }
+          }
 
           console.log(
             `Expired => User:${membership.userId} | Plan:${plan.planId}`
